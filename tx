@@ -1,0 +1,6 @@
+                GPIO.output(config.moisturePower, GPIO.HIGH)
+       		Moisture_Raw   = ads1115.readADCSingleEnded(config.moistureADPin, gain, sps) # AIN0 wired to AirQuality Sensor
+                state.Raw_Moisture_Humidity_Array[0] = Moisture_Raw 
+
+                GPIO.output(config.moisturePower, GPIO.LOW)
+
