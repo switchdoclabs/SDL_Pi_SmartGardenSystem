@@ -6,7 +6,7 @@
 # SwitchDoc Labs
 #
 
-SGSVERSION = "005"
+SGSVERSION = "005P"
 #imports 
 
 import sys, traceback
