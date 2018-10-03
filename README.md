@@ -15,6 +15,8 @@ sudo apt-get update <BR>
 sudo apt-get dist-upgrade <BR>
 
 sudo apt-get install build-essential python-pip python-dev python-smbus git <BR>
+
+cd  <BR>
 git clone https://github.com/adafruit/Adafruit_Python_GPIO.git <BR>
 cd Adafruit_Python_GPIO <BR>
 sudo python setup.py install <BR>
@@ -38,6 +40,18 @@ sudo pip install apscheduler <BR>
 #Installing PubNub
 
 sudo pip install 'pubnub>=4.0.5' <BR>
+
+#Installing Pixel Support
+
+cd<BR>
+cd SDL_Pi_SmartGardenSystem<BR>
+cd SDL_Pi_8PixelStrip<BR>
+follow the installation directions in README.md<BR>
+
+Make sure you go down into the python directory and follow the README.md in that directory<BR>
+use "sudo" if you run into permissions problems with the python installation<BR>
+
+# final thoughts
 
 Note:  state.py contains initial constants for running SmartPlantPi (Alarms, etc.) that you may want to change <BR>
 

@@ -238,10 +238,10 @@ def waterPlant(plantNumber):
 ################
 
 
-Sunlight_Sensor = SDL_Pi_SI1145.SDL_Pi_SI1145()
-time.sleep(1)
 
 try:
+        Sunlight_Sensor = SDL_Pi_SI1145.SDL_Pi_SI1145()
+        time.sleep(1)
         state.Sunlight_Visible = SI1145Lux.SI1145_VIS_to_Lux(Sunlight_Sensor.readVisible())
 
         config.Sunlight_Present = True
@@ -265,6 +265,8 @@ try:
 	OLEDLock = threading.Lock()
 except:
         config.OLED_Present = False
+        print "Smart Garden System must have OLED Present"
+        raise SystemExit
 
 
 

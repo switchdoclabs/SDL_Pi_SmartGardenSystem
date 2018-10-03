@@ -24,8 +24,8 @@ DEBUG = True
 # Blynk configuration
 ############
 
-USEBLYNK = True 
-BLYNK_AUTH = 'daff75da224b447b98ce2e5b0abe5312'
+USEBLYNK = False 
+BLYNK_AUTH = 'xxxxx'
 BLYNK_URL = 'http://blynk-cloud.com/'
 
 ############
@@ -49,7 +49,7 @@ MySQL_Password = "password"
 # Moisture Sensor and Pump Count 
 ############
 
-plant_number = 5
+plant_number = 1
 moisture_sensor_count = plant_number
 USB_pump_count = plant_number
 
@@ -65,7 +65,7 @@ Resistor2SensorCalibration = [460,131]
 # for capacitance1: first number is for 0%, second number is 100%
 Capacitor1SensorCalibration = [ [363,150], [363,150], [363,150], [363,150], [363,150], [363,150],[363,150], [363,150], [363,150]]
 
-# if your pumps stick up to high, adjust this value so tank will still ready empty
+# if your pumps stick up too high, adjust this value so tank will still ready empty
 Tank_Pump_Level = 15.0
 
 ############
