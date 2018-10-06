@@ -109,24 +109,25 @@ PixelLock = threading.Lock()
 
 
 ###############
-# Optional LED
+# Flash LED
 ###############
 
 def blinkLED(pixel, color, times, length):
 
-    PixelLock.acquire()
+    if (state.runLEDs == True):
+        PixelLock.acquire()
 
-    print "N--->Blink LED:%i/%i/%i/%6.2f" % (pixel, color, times, length)
+        print "N--->Blink LED:%i/%i/%i/%6.2f" % (pixel, color, times, length)
 
-    for x in range(0, times):
-        strip.setPixelColor(0, color)
-        strip.show()
-        time.sleep(length)
+        for x in range(0, times):
+            strip.setPixelColor(0, color)
+            strip.show()
+            time.sleep(length)
 	
-    strip.setPixelColor(0, Color(0,0,0))
-    strip.show()
+        strip.setPixelColor(0, Color(0,0,0))
+        strip.show()
 
-    PixelLock.release()
+        PixelLock.release()
 
 
     
@@ -1091,11 +1092,11 @@ if __name__ == '__main__':
 
     scheduler = BackgroundScheduler()
 
+    '''
     ##############
     # state persistance
     # if pickle file present, read it in
     ##############
-
     if (os.path.exists('SGSState.pkl')):
 
     	input = open('SGSState.pkl', 'rb')
@@ -1111,7 +1112,7 @@ if __name__ == '__main__':
 
     	input.close()
 	
-
+      '''
 
 
     scheduler.add_listener(ap_my_listener, apscheduler.events.EVENT_JOB_ERROR)	
@@ -1150,7 +1151,7 @@ if __name__ == '__main__':
 
 	
     # save state to pickle file 
-    scheduler.add_job(saveState, 'interval', minutes=30)
+    #scheduler.add_job(saveState, 'interval', minutes=30)
 
     #init blynk app state
     if (config.USEBLYNK):

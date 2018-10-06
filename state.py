@@ -85,7 +85,7 @@ Alarm_Temperature = 5.0
 Alarm_Moisture = 60.0
 Alarm_Water = False
 Alarm_Air_Quality = 10000 
-Alarm_Moisture_Sensor_Fault = 10.0
+Alarm_Moisture_Sensor_Fault = 15.0
 
 Alarm_Active = True
 Alarm_Cancel = False
@@ -106,6 +106,9 @@ Is_Alarm_WaterEmpty = False
 
 runRainbow = False
 
+# turn LED display on/off
+
+runLEDs = True
 # plant water requests
 
 #-1 means no plant request

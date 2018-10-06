@@ -18,6 +18,7 @@ def blynkInit():
     # initalize button states
     r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V5?value=0')
     r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V41?value=0')
+    r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V30?value=1')
 
 def blynkResetButton(buttonNumber):
     r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/'+buttonNumber+'?value=0')
@@ -146,6 +147,9 @@ def blynkStateUpdate():
         return 0
 
 def blynkStatusUpdate():
+
+    if (DEBUGBLYNK):
+        print "blynkStatusUpdate Entry"
     try:
         put_header={"Content-Type": "application/json"}
 
@@ -169,6 +173,22 @@ def blynkStatusUpdate():
             state.runRainbow = False
             if (DEBUGBLYNK):
                 print "blynkStatusUpdate:POSTBRC:state.runRainbow set to False"
+
+        # look for Turning LED Display Off button change
+        r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/get/V30') # read button state
+        if (DEBUGBLYNK):
+            print "blynkStatusUpdate:POSTBR:r.status_code:",r.status_code
+            print "blynkStatusUpdate:POSTBR:r.text:",r.text
+   
+        
+        if (r.text == '["1"]'):
+            state.runLEDs = True
+            if (DEBUGBLYNK):
+                print "blynkStatusUpdate:POSTBRC:state.runLEDs set to True"
+        else:
+            state.runLEDs = False
+            if (DEBUGBLYNK):
+                print "blynkStatusUpdate:POSTBRC:state.runLEDs set to False"
 
 
 

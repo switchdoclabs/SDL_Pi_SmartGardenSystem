@@ -91,29 +91,42 @@ def statusLEDs(strip, PixelLock):
 
 
     PixelLock.acquire()
-    while (state.runRainbow == True):
-        print "rainbow start"
-        rainbow(strip)
-        #rainbowCycle(strip)
-        #theaterChaseRainbow(strip)
-        print "rainbow end"
 
-    for i in range(1,8):
-        strip.setPixelColor(i,Color(0,0,0))
 
-    time.sleep(0.2)
-    strip.show()
-    setDryness(strip, PixelLock)
-    time.sleep(2.0)
+    if (state.runLEDs == True):
+        while (state.runRainbow == True):
+            print "rainbow start"
+            rainbow(strip)
+            #rainbowCycle(strip)
+            #theaterChaseRainbow(strip)
+            print "rainbow end"
 
-    for i in range(1,8):
-        strip.setPixelColor(i,Color(0,0,0))
+        for i in range(1,8):
+            strip.setPixelColor(i,Color(0,0,0))
 
-    time.sleep(0.2)
-    strip.show()
-    setWaterLevel(strip, PixelLock)
-    time.sleep(2.0)
+        time.sleep(0.2)
+        strip.show()
+        setDryness(strip, PixelLock)
+        time.sleep(2.0)
 
+        for i in range(1,8):
+            strip.setPixelColor(i,Color(0,0,0))
+    
+        time.sleep(0.2)
+        strip.show()
+        setWaterLevel(strip, PixelLock)
+        time.sleep(2.0)
+
+    else:
+            strip.setPixelColor(7,Color(0,0,0))
+            strip.setPixelColor(6,Color(0,0,0))
+            strip.setPixelColor(5,Color(0,0,0))
+            strip.setPixelColor(4,Color(0,0,0))
+            strip.setPixelColor(3,Color(0,0,0))
+            strip.setPixelColor(2,Color(0,0,0))
+            strip.setPixelColor(1,Color(0,0,0))
+            strip.setPixelColor(0,Color(0,0,0))
+            strip.show()
 
     PixelLock.release()
 

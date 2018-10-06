@@ -4,6 +4,7 @@ tx*
 *.xml
 *.temp
 *.test
+*.pkl
 nohup.out
 .*DS_Store
 conflocal.py
