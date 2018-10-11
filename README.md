@@ -7,7 +7,7 @@
 
 # all SmartGardenSystem Documentation on  shop.switchdoc.com under Smart Garden System
 
-# pre-release - not for general use
+October 11, 2018 - Version 006 - Initial Release minus Plant 6-9 support
 
 # basic install instructions for supporting libraries
 
