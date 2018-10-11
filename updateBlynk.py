@@ -39,6 +39,17 @@ def blynkEventUpdate():
         print (e)
         return 0
 
+def blynkTerminalUpdate(entry):
+        put_header={"Content-Type": "application/json"}
+
+        put_body = json.dumps([entry])
+        if (DEBUGBLYNK):
+            print "blynkStateUpdate:Pre:put_body:",put_body
+        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V31', data=put_body, headers=put_header)
+        if (DEBUGBLYNK):
+            print "blynkStateUpdate:POST:r.status_code:",r.status_code
+    
+
 def blynkStateUpdate():
     try:
         put_header={"Content-Type": "application/json"}
@@ -48,6 +59,8 @@ def blynkStateUpdate():
         blynkEventUpdate()
 
         # do the graphs
+
+
         val = state.AirQuality_Sensor_Value 
         put_body = json.dumps([val])
         if (DEBUGBLYNK):

@@ -6,7 +6,7 @@
 # SwitchDoc Labs
 #
 
-SGSVERSION = "005P"
+SGSVERSION = "006"
 #imports 
 
 import sys, traceback
@@ -185,8 +185,9 @@ def forceWaterPlant(plantNumber):
             
             pumpWater(2.0, plantNumber)
             state.Last_Event = "Plant #{:d} Force Watered at: ".format(plantNumber)+time.strftime("%Y-%m-%d %H:%M:%S")
-           
             if (config.USEBLYNK):
+                updateBlynk.blynkTerminalUpdate(time.strftime("%Y-%m-%d %H:%M:%S")+": Plant #{:d} Force Watered".format(plantNumber)+"\n")
+           
                 updateBlynk.blynkEventUpdate()
             state.SGS_State = previousState
             if (config.USEPUBNUB):
@@ -216,9 +217,13 @@ def waterPlant(plantNumber):
             if ((state.Tank_Percentage_Full > config.Tank_Pump_Level) or (state.Plant_Water_Request == True)) :
                 pumpWater(2.0, plantNumber)
                 state.Last_Event = "Plant #{:d} Watered at: ".format(plantNumber)+time.strftime("%Y-%m-%d %H:%M:%S")
+                if (config.USEBLYNK):
+                    updateBlynk.blynkTerminalUpdate(time.strftime("%Y-%m-%d %H:%M:%S")+": Plant #{:d} Watered".format(plantNumber)+"\n")
             else:
                 if (config.DEBUG):
                     print "Plant #{:d} pumpWater overruled - Tank Empty".format(plantNumber)
+                if (config.USEBLYNK):
+                    updateBlynk.blynkTerminalUpdate(time.strftime("%Y-%m-%d %H:%M:%S")+": Plant #{:d} pumpWater overruled - Tank Empty".format(plantNumber)+"\n")
                 state.Last_Event = "NW-Tank Empty at: " + time.strftime("%Y-%m-%d %H:%M:%S")
            
             if (config.USEBLYNK):
@@ -1047,6 +1052,9 @@ if __name__ == '__main__':
     print "Program Started at:"+ time.strftime("%Y-%m-%d %H:%M:%S")
     print ""
 
+    
+    updateBlynk.blynkTerminalUpdate(time.strftime("%Y-%m-%d %H:%M:%S")+": SGS Program Started"+ "\n")
+    updateBlynk.blynkTerminalUpdate( "SGS Version "+SGSVERSION+"  - SwitchDoc Labs"+"\n")
     
     print returnStatusLine("ADS1115",config.ADS1115_Present)
     print returnStatusLine("OLED",config.OLED_Present)
