@@ -14,7 +14,7 @@ import RPi.GPIO as GPIO
 import state
 import time
 
-def turnOnExtendedPump(plantNumber,GDE1, GED2):
+def turnOnExtendedPump(plantNumber,GDE1, GDE2):
 
     # check for valid plantNumber
     if (plantNumber > config.plant_number):
@@ -24,8 +24,8 @@ def turnOnExtendedPump(plantNumber,GDE1, GED2):
         GDE1.writeGPIO((plantNumber+2), 1) # Control
         GDE1.writeGPIO((plantNumber+2)+1, 0) # Enable Not
     else:
-        if (config.DEBUG):
-            print "GDE_Ext2 Not Implemented"
+        GDE2.writeGPIO((plantNumber-2), 1) # Control
+        GDE2.writeGPIO((plantNumber-2)+1, 0) # Enable Not
     print "Pump #{:d} turned ON".format(plantNumber)
     return 1
 
@@ -40,14 +40,14 @@ def turnOffExtendedPump(plantNumber,GDE1, GDE2):
         GDE1.writeGPIO((plantNumber+2), 0) # Control
         GDE1.writeGPIO((plantNumber+2)+1, 0) # Enable Not
     else:
-        if (config.DEBUG):
-            print "GDE_Ext2 Not Implemented"
+        GDE2.writeGPIO((plantNumber-2), 0) # Control
+        GDE2.writeGPIO((plantNumber-2)+1, 0) # Enable Not
     print "Pump #{:d} turned OFF".format(plantNumber)
 
 
     return 1
 
-def readExtendedMoisture(plantNumber,GDE, ads1115):
+def readExtendedMoisture(plantNumber,GDE1, ads1115_1, GDE2, ads1115_2):
 
    
     if (config.DEBUG):
@@ -57,9 +57,10 @@ def readExtendedMoisture(plantNumber,GDE, ads1115):
         print "Plant Number {:d} not present".format(plantNumber)
     value = 0.0
     if (plantNumber < 6):
-        value = readExtendedMoistureExt(plantNumber,GDE, ads1115)
+        value = readExtendedMoistureExt(plantNumber,GDE1, ads1115_1)
     else:
-        print "Read Moisture for EXT2 Not Implemented"
+        value = readExtendedMoistureExt(plantNumber,GDE2, ads1115_2)
+        
     return value 
 
 
@@ -190,19 +191,19 @@ def readExtendedMoistureExt(plantNumber,GDE, ads1115):
     else:
 
         # do EXT1 
-        if (plantNumber < 6):
-            
-	    if (config.ADS1115_Ext1_Present):
-                GDE.writeGPIO(plantNumber-2, 1)
+        if (plantNumber < 10):
+             
+	    
+                GDE.writeGPIO((plantNumber-2 )%4, 1)
                 #time.sleep(1.00)
        		#Moisture_Raw   = ads1115.readADCSingleEnded(0, gain, sps)/7 # AIN0 wired to AirQuality Sensor
        		#Moisture_Raw   = ads1115.readADCSingleEnded(plantNumber-2, gain, sps)
-       		Moisture_Raw   = ads1115.readRaw(plantNumber-2, gain, sps)
+       		Moisture_Raw   = ads1115.readRaw((plantNumber-2)%4, gain, sps)
                 if (Moisture_Raw > 0x7FFF):
                     Moisture_Raw = 0 # Zero out negative Values
                 Moisture_Raw = Moisture_Raw / 64 # scale to 10 bits
                 state.Raw_Moisture_Humidity_Array[plantNumber -1] = Moisture_Raw  
-       		Moisture_RawV   = ads1115.readADCSingleEnded(plantNumber-2, gain, sps) # Scale to 10 bits
+       		Moisture_RawV   = ads1115.readADCSingleEnded((plantNumber-2)%4, gain, sps) # Scale to 10 bits
                 print "Plant #%d Moisture_RawV=%0.2f"% (plantNumber,Moisture_RawV)
                 
               
@@ -222,11 +223,11 @@ def readExtendedMoistureExt(plantNumber,GDE, ads1115):
        		
 
                 if ((config.SensorType[plantNumber-1] == "R1") or (config.SensorType[plantNumber-1] == "R2")):
-                    GDE.writeGPIO(plantNumber-2, 0)
+                    GDE.writeGPIO((plantNumber-2)%4, 0)
                 if (config.SensorType[plantNumber-1] == "C1"):
-                    GDE.writeGPIO(plantNumber-2, 0)
+                    GDE.writeGPIO((plantNumber-2)%4, 0)
                     time.sleep(0.25)
-                    GDE.writeGPIO(plantNumber-2, 1)
+                    GDE.writeGPIO((plantNumber-2)%4, 1)
 
                  		
        	        if (config.DEBUG):
@@ -241,16 +242,6 @@ def readExtendedMoistureExt(plantNumber,GDE, ads1115):
        	        if (config.DEBUG):
         	        print"------------------------------"
 	        return Moisture_Humidity
-	    else:
-    	            Moisture_Humidity = 0.0
-	            return Moisture_Humidity
-        else:
-
-            if (config.ADS1115_Ext2_Present):
-                return 0.0
-            else:
-                if (config.DEBUG):
-                    print "Error -> ADS1115_Ext2 Not Present"
                     
                 
         return 0.0

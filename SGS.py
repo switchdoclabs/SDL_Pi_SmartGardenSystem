@@ -6,7 +6,7 @@
 # SwitchDoc Labs
 #
 
-SGSVERSION = "006"
+SGSVERSION = "007"
 #imports 
 
 import sys, traceback
@@ -343,7 +343,7 @@ try:
    GDE_Ext1.setDirectionGPIOChannel(6, GDE_Ext1.OUTPUT)  
    GDE_Ext1.setDirectionGPIOChannel(7, GDE_Ext1.OUTPUT) 
 
-   for i in range (0, 9):
+   for i in range (0, 8):
        GDE_Ext1.writeGPIO(i, 0)
 
    value = GDE_Ext1.readGPIO(1)
@@ -369,6 +369,7 @@ try:
    GDE_Ext2.setPullupGPIOChannel(5, GDE_Ext2.SDL_Pi_GroveDigitalExtender_ON)
    GDE_Ext2.setPullupGPIOChannel(6, GDE_Ext2.SDL_Pi_GroveDigitalExtender_ON)
    GDE_Ext2.setPullupGPIOChannel(7, GDE_Ext2.SDL_Pi_GroveDigitalExtender_ON)
+   """
    GDE_Ext2.setDirectionGPIOChannel(0, GDE_Ext2.OUTPUT)  
    GDE_Ext2.setDirectionGPIOChannel(1, GDE_Ext2.OUTPUT)  
    GDE_Ext2.setDirectionGPIOChannel(2, GDE_Ext2.OUTPUT)  
@@ -377,8 +378,8 @@ try:
    GDE_Ext2.setDirectionGPIOChannel(5, GDE_Ext2.OUTPUT)  
    GDE_Ext2.setDirectionGPIOChannel(6, GDE_Ext2.OUTPUT)  
    GDE_Ext2.setDirectionGPIOChannel(7, GDE_Ext2.OUTPUT) 
-   """
-   for i in range (0, 9):
+   
+   for i in range (0, 8):
        GDE_Ext2.writeGPIO(i, 0)
 
    value = GDE_Ext2.readGPIO(1)
@@ -418,10 +419,29 @@ except TypeError as e:
 ################
 #4 Channel ADC ADS1115 Ext2 setup
 ################
-# requries I2C Mux - wait for later
+# 
+# Set this to ADS1015 or ADS1115 depending on the ADC you are using!
+ADS1115 = 0x01  # 16-bit ADC
 
-ads1115_ext2 = None
-config.ADS1115_Ext2_Present = False
+ads1115_ext2 = ADS1x15(ic=ADS1115, address=0x4A)
+
+# Select the gain
+gain = 6144  # +/- 6.144V
+#gain = 4096  # +/- 4.096V
+
+# Select the sample rate
+sps = 250  # 250 samples per second
+# determine if device present
+try:
+       value = ads1115_ext2.readRaw(0, gain, sps) # AIN0 wired to AirQuality Sensor
+       time.sleep(1.0)
+       value = ads1115_ext2.readRaw(0, gain, sps) # AIN0 wired to AirQuality Sensor
+
+       config.ADS1115_Ext2_Present = True
+
+except TypeError as e:
+       config.ADS1115_Ext2_Present = False
+
 
 
 
@@ -682,11 +702,11 @@ def updateState():
     
     
             if (config.ADS1115_Present):
-                state.Moisture_Humidity  = extendedPlants.readExtendedMoistureExt(1, None, ads1115) 
+                state.Moisture_Humidity  = extendedPlants.readExtendedMoisture(1, None, ads1115, None, None) 
                 state.Moisture_Humidity_Array[0] =  state.Moisture_Humidity 
 
                 for i in range(2,config.plant_number+1):     
-                    state.Moisture_Humidity_Array[i-1] = extendedPlants.readExtendedMoistureExt(i,GDE_Ext1, ads1115_ext1)
+                    state.Moisture_Humidity_Array[i-1] = extendedPlants.readExtendedMoisture(i,GDE_Ext1, ads1115_ext1, GDE_Ext2, ads1115_ext2)
 
                 if (config.DEBUG):
                     print ("From Moisture Array")
@@ -1052,9 +1072,9 @@ if __name__ == '__main__':
     print "Program Started at:"+ time.strftime("%Y-%m-%d %H:%M:%S")
     print ""
 
-    
-    updateBlynk.blynkTerminalUpdate(time.strftime("%Y-%m-%d %H:%M:%S")+": SGS Program Started"+ "\n")
-    updateBlynk.blynkTerminalUpdate( "SGS Version "+SGSVERSION+"  - SwitchDoc Labs"+"\n")
+    if (config.USEBLYNK):
+        updateBlynk.blynkTerminalUpdate(time.strftime("%Y-%m-%d %H:%M:%S")+": SGS Program Started"+ "\n")
+        updateBlynk.blynkTerminalUpdate( "SGS Version "+SGSVERSION+"  - SwitchDoc Labs"+"\n")
     
     print returnStatusLine("ADS1115",config.ADS1115_Present)
     print returnStatusLine("OLED",config.OLED_Present)
@@ -1068,6 +1088,9 @@ if __name__ == '__main__':
     print "Sensor Count: ",config.moisture_sensor_count
     print "Pump Count: ",config.USB_pump_count
     print
+    if (config.USEBLYNK):
+        updateBlynk.blynkTerminalUpdate( "Sensor Count: %d\n"%config.moisture_sensor_count)
+        updateBlynk.blynkTerminalUpdate("Pump Count: %d\n"%config.USB_pump_count)
 
     print "----------------------"
     print "Extender Devices"
@@ -1075,7 +1098,7 @@ if __name__ == '__main__':
     print returnStatusLine("ADS1115_Ext1",config.ADS1115_Ext1_Present)
     print returnStatusLine("ADS1115_Ext2",config.ADS1115_Ext2_Present)
     print returnStatusLine("GPIO Extender 1",config.GroveDigital_Ext1_Present)
-    print returnStatusLine("GPIO Extender 1",config.GroveDigital_Ext2_Present)
+    print returnStatusLine("GPIO Extender 2",config.GroveDigital_Ext2_Present)
     print
 
 
@@ -1089,7 +1112,7 @@ if __name__ == '__main__':
     print returnStatusLine("MySQL Logging Mode",config.enable_MySQL_Logging)
     print
     print "----------------------"
-    value = extendedPlants.readExtendedMoistureExt(1, None, ads1115)
+    value = extendedPlants.readExtendedMoisture(1, None, ads1115, None, None)
     if (value <= state.Alarm_Moisture_Sensor_Fault):
     	 print "Moisture Sensor Fault:   Not In Plant or not Present. Value %0.2f%%" % value 
     else:

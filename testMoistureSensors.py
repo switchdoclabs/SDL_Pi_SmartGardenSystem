@@ -84,7 +84,7 @@ try:
    GDE_Ext1.setDirectionGPIOChannel(6, GDE_Ext1.OUTPUT)  
    GDE_Ext1.setDirectionGPIOChannel(7, GDE_Ext1.OUTPUT) 
 
-   for i in range (0, 9):
+   for i in range (0, 8):
        GDE_Ext1.writeGPIO(i, 0)
 
    #value = GDE_Ext1.readGPIO(1)
@@ -110,6 +110,7 @@ try:
    GDE_Ext2.setPullupGPIOChannel(5, GDE_Ext2.SDL_Pi_GroveDigitalExtender_ON)
    GDE_Ext2.setPullupGPIOChannel(6, GDE_Ext2.SDL_Pi_GroveDigitalExtender_ON)
    GDE_Ext2.setPullupGPIOChannel(7, GDE_Ext2.SDL_Pi_GroveDigitalExtender_ON)
+   """
    GDE_Ext2.setDirectionGPIOChannel(0, GDE_Ext2.OUTPUT)  
    GDE_Ext2.setDirectionGPIOChannel(1, GDE_Ext2.OUTPUT)  
    GDE_Ext2.setDirectionGPIOChannel(2, GDE_Ext2.OUTPUT)  
@@ -118,11 +119,11 @@ try:
    GDE_Ext2.setDirectionGPIOChannel(5, GDE_Ext2.OUTPUT)  
    GDE_Ext2.setDirectionGPIOChannel(6, GDE_Ext2.OUTPUT)  
    GDE_Ext2.setDirectionGPIOChannel(7, GDE_Ext2.OUTPUT) 
-   """
-   for i in range (0, 9):
+   
+   for i in range (0, 8):
        GDE_Ext2.writeGPIO(i, 0)
 
-   value = GDE_Ext2.readGPIO(1)
+   #value = GDE_Ext2.readGPIO(1)
    config.GroveDigital_Ext2_Present = True
 except Exception as e: 
    print(e)
@@ -164,7 +165,28 @@ except TypeError as e:
 
 ads1115_ext2 = None
 
-# requries I2C Mux - wait for later
+# Set this to ADS1015 or ADS1115 depending on the ADC you are using!
+ADS1115 = 0x01  # 16-bit ADC
+
+ads1115_ext2 = ADS1x15(ic=ADS1115, address=0x4A)
+
+# Select the gain
+gain = 6144  # +/- 6.144V
+#gain = 4096  # +/- 4.096V
+
+# Select the sample rate
+sps = 250  # 250 samples per second
+# determine if device present
+try:
+       value = ads1115_ext2.readRaw(0, gain, sps) # AIN0 wired to AirQuality Sensor
+       time.sleep(1.0)
+       value = ads1115_ext2.readRaw(0, gain, sps) # AIN0 wired to AirQuality Sensor
+
+       config.ADS1115_Ext2_Present = True
+
+except TypeError as e:
+       config.ADS1115_Ext2_Present = False
+
 
 
 
@@ -186,7 +208,7 @@ while (1):
     # do the rest of the plants
     if (config.ADS1115_Ext2_Present):
         for i in range(6, 10): 
-                print "Plant #%i: %0.2f/%s" %(i,extendedPlants.readExtendedMoistureExt(i, GDE_Ext1, ads1115_ext2),config.SensorType[i-1] )
+                print "Plant #%i: %0.2f/%s" %(i,extendedPlants.readExtendedMoistureExt(i, GDE_Ext2, ads1115_ext2),config.SensorType[i-1] )
     else:
         print "ADS1115_Ext2 Not Present"
 
