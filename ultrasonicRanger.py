@@ -147,7 +147,8 @@ def returnPercentFull():
         full = 0.0
     if (full > 100.0):
         full = 100.0
-    print "Adjusted Tank_Percentage_Full= %f" % full
+    if (config.DEBUG):
+        print "Adjusted Tank_Percentage_Full= %f" % full
 
     return full
 

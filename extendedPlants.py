@@ -145,7 +145,8 @@ def readExtendedMoistureExt(plantNumber,GDE, ads1115):
 
                 state.Raw_Moisture_Humidity_Array[0] = Moisture_Raw 
        		Moisture_RawV   = ads1115.readADCSingleEnded(config.moistureADPin, gain, sps)
-                print "Plant #%d Moisture_RawV=%0.2f"% (1,Moisture_RawV)
+                if (config.DEBUG):
+                    print "Plant #%d Moisture_RawV=%0.2f"% (1,Moisture_RawV)
                 if ((config.SensorType[plantNumber-1] == "R1") or (config.SensorType[plantNumber-1] == "R2")):
                     GPIO.output(config.moisturePower, GPIO.LOW)
                 if (config.SensorType[plantNumber-1] == "C1"):
@@ -204,7 +205,8 @@ def readExtendedMoistureExt(plantNumber,GDE, ads1115):
                 Moisture_Raw = Moisture_Raw / 64 # scale to 10 bits
                 state.Raw_Moisture_Humidity_Array[plantNumber -1] = Moisture_Raw  
        		Moisture_RawV   = ads1115.readADCSingleEnded((plantNumber-2)%4, gain, sps) # Scale to 10 bits
-                print "Plant #%d Moisture_RawV=%0.2f"% (plantNumber,Moisture_RawV)
+       	        if (config.DEBUG):
+                    print "Plant #%d Moisture_RawV=%0.2f"% (plantNumber,Moisture_RawV)
                 
               
                 Moisture_Humidity = 0.0

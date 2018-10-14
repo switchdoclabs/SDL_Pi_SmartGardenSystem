@@ -117,7 +117,8 @@ def blinkLED(pixel, color, times, length):
     if (state.runLEDs == True):
         PixelLock.acquire()
 
-        print "N--->Blink LED:%i/%i/%i/%6.2f" % (pixel, color, times, length)
+        if (config.DEBUG):
+            print "N--->Blink LED:%i/%i/%i/%6.2f" % (pixel, color, times, length)
 
         for x in range(0, times):
             strip.setPixelColor(0, color)
