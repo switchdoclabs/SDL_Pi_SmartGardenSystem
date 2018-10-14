@@ -16,7 +16,7 @@ fromAddress = "yourfromaddress@example.com"
 # Debug True or False
 ############
 
-DEBUG = True
+DEBUG = False
 
 
 
