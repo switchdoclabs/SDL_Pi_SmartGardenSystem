@@ -13,6 +13,7 @@ October 28, 2018 - Version 008 - Fixed OLED Display, Blynk lock, disable manual 
 
 # basic install instructions for supporting libraries
 
+
 sudo apt-get update <BR>
 sudo apt-get dist-upgrade <BR>
 
