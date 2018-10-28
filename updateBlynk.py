@@ -16,12 +16,36 @@ DEBUGBLYNK = False
 
 def blynkInit():
     # initalize button states
-    r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V5?value=0')
-    r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V41?value=0')
-    r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V30?value=1')
+    try:
+        r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V5?value=0')
+        r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V41?value=0')
+        if (config.manual_water == False):
+            # set the label to disabled 
+            label = "Disabled"
+            r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V41?offLabel='+label)
+            if (DEBUGBLYNK):
+                print "blynkInit:WaterDisabled:r.status_code:",r.status_code
+        else:
+            label = "Water Plant"
+            r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V41?offLabel='+label)
+            r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V41?offBackColor=%230000FF') # Blue
+            if (DEBUGBLYNK):
+                print "blynkInit:WaterEnabled:r.status_code:",r.status_code
+
+        
+        r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V30?value=1')
+    except Exception as e:
+        print "exception in blynkInit"
+        print (e)
+        return 0
 
 def blynkResetButton(buttonNumber):
-    r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/'+buttonNumber+'?value=0')
+    try:
+        r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/'+buttonNumber+'?value=0')
+    except Exception as e:
+        print "exception in blynkResetButton"
+        print (e)
+        return 0
 
 def blynkEventUpdate():
     try:
@@ -40,6 +64,7 @@ def blynkEventUpdate():
         return 0
 
 def blynkTerminalUpdate(entry):
+    try:
         put_header={"Content-Type": "application/json"}
 
         put_body = json.dumps([entry])
@@ -48,6 +73,10 @@ def blynkTerminalUpdate(entry):
         r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V31', data=put_body, headers=put_header)
         if (DEBUGBLYNK):
             print "blynkStateUpdate:POST:r.status_code:",r.status_code
+    except Exception as e:
+        print "exception in blynkTerminalUpdate"
+        print (e)
+        return 0
     
 
 def blynkStateUpdate():
@@ -211,27 +240,33 @@ def blynkStatusUpdate():
             print "blynkStatusUpdate:POSTPWR:r.status_code:",r.status_code
             print "blynkStatusUpdate:POSTPWR:r.text:",r.text
         if (r.text == '["1"]'):
-
-            if (state.Plant_Water_Request == False):
-                # fetch the plant number
-                r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/get/V40') # read button state
-                # strip headers
-                myString = r.text
-                myString = myString.replace('["', "")
-                myString = myString.replace('"]', "")
-                state.Plant_Number_Water_Request = int(myString)
-                if (DEBUGBLYNK):
-                    print "blynkStatusUpdate:POSTBRC:myString: ", myString
-                    print "blynkStatusUpdate:POSTBRC:r.text: ", r.text
-                    print "state.Plant_Number_Water_Request: ", state.Plant_Number_Water_Request
-                #set request to True
-                state.Plant_Water_Request = True
-                if (DEBUGBLYNK):
-                    print "blynkStatusUpdate:POSTBRC:state.Plant_WaterRequest set to True"
+            if (config.manual_water == True):
+                if (state.Plant_Water_Request == False):
+                    # fetch the plant number
+                    r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/get/V40') # read button state
+                    # strip headers
+                    myString = r.text
+                    myString = myString.replace('["', "")
+                    myString = myString.replace('"]', "")
+                    state.Plant_Number_Water_Request = int(myString)
+                    if (DEBUGBLYNK):
+                        print "blynkStatusUpdate:POSTBRC:myString: ", myString
+                        print "blynkStatusUpdate:POSTBRC:r.text: ", r.text
+                        print "state.Plant_Number_Water_Request: ", state.Plant_Number_Water_Request
+                    #set request to True
+                    state.Plant_Water_Request = True
+                    if (DEBUGBLYNK):
+                        print "blynkStatusUpdate:POSTBRC:state.Plant_WaterRequest set to True"
+                else:
+                    r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V41?value=1')
+                    if (DEBUGBLYNK):
+                        print "blynkStatusUpdate:POSTBRC:Plant_WaterRequest already pending"
             else:
-                r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V41?value=1')
+                r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V41?value=0')
+                state.Plant_Water_Request = False
+                state.Plant_Number_Water_Request = -1
                 if (DEBUGBLYNK):
-                    print "blynkStatusUpdate:POSTBRC:Plant_WaterRequest already pending"
+                    print "blynkStatusUpdate:POSTBRC:state.Plant_WaterRequest set to False"
 
         else:
             state.Plant_Water_Request = False

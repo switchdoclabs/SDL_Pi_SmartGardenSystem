@@ -6,7 +6,7 @@
 # SwitchDoc Labs
 #
 
-SGSVERSION = "007"
+SGSVERSION = "008"
 #imports 
 
 import sys, traceback
@@ -140,15 +140,15 @@ GPIO.setup(config.USBControl, GPIO.OUT)
 GPIO.output(config.USBEnable, GPIO.LOW)
 
 def startPump():
-        if (config.DEBUG):
-            print("Pump #1 turned On")
+        
+        print("Pump #1 turned On")
         blinkLED(0,Color(0,255,0),1,0.5)
         GPIO.output(config.USBEnable, GPIO.LOW)
         GPIO.output(config.USBControl, GPIO.HIGH)
 
 def stopPump():
-        if (config.DEBUG):
-            print("Pump #1 turned Off")
+       
+        print("Pump #1 turned Off")
 
         blinkLED(0,Color(255,0,0),1,0.5)
         GPIO.output(config.USBEnable, GPIO.HIGH)
@@ -583,11 +583,20 @@ def checkAndWater():
 def forceWaterPlantCheck():
     if ((state.Plant_Water_Request == True) and (state.Plant_Number_Water_Request > 0)):
         # now check for forced watering
+
+        if (state.Plant_Number_Water_Request > config.plant_number):
+            print "Non-existent Plant {:d} Water from Button Ignored".format(state.Plant_Number_Water_Request)
+            updateBlynk.blynkTerminalUpdate(time.strftime("%Y-%m-%d %H:%M:%S")+": Plant #{:d} Force Ignored".format(state.Plant_Number_Water_Request)+"\n")
+            state.Plant_Number_Water_Request = -1
+            updateBlynk.blynkResetButton("V41")
+            state.Plant_Water_Request = False
+            return
         if (config.DEBUG):
             print ">>>>>>>>>>>>>>"
             print "Entering Force Water"
             print ">>>>>>>>>>>>>>"
             print "FW-Attempt UpdateStateLock acquired"
+
         UpdateStateLock.acquire()
         if (config.DEBUG):
             print "FW-UpdateStateLock acquired"
@@ -765,11 +774,28 @@ def updateState():
                     if (config.DEBUG):
                           print "OLEDLock acquired"
                     Scroll_SSD1306.addLineOLED(display,  ("----------"))
-                    Scroll_SSD1306.addLineOLED(display,  ("Plant Moisture = \t%0.2f %%")%(state.Moisture_Humidity))
+                    Scroll_SSD1306.addLineOLED(display,  ("Plant #1 Moisture = \t%0.2f %%")%(state.Moisture_Humidity))
                     Scroll_SSD1306.addLineOLED(display,  ("Temperature = \t%0.2f %s")%(util.returnTemperatureCF(state.Temperature), util.returnTemperatureCFUnit()))
                     Scroll_SSD1306.addLineOLED(display,  ("Humidity =\t%0.2f %%")%(state.Humidity))
                     Scroll_SSD1306.addLineOLED(display,  ("Air Qual = %d/%s")%(state.AirQuality_Sensor_Value, state.AirQuality_Sensor_Text))
                     Scroll_SSD1306.addLineOLED(display,  ("Sunlight = \t%0.2f Lux")%(state.Sunlight_Vis))
+                    # Now display other plants
+                    if (config.plant_number >1):
+                        # print 2-4
+                        time.sleep(2.0)
+                        Scroll_SSD1306.addLineOLED(display,  ("----------"))
+                        Scroll_SSD1306.addLineOLED(display,  ("Plant #2 Moisture = \t%0.2f %%")%(state.Moisture_Humidity_Array[1]))
+                        Scroll_SSD1306.addLineOLED(display,  ("Plant #3 Moisture = \t%0.2f %%")%(state.Moisture_Humidity_Array[2]))
+                        Scroll_SSD1306.addLineOLED(display,  ("Plant #4 Moisture = \t%0.2f %%")%(state.Moisture_Humidity_Array[3]))
+                        Scroll_SSD1306.addLineOLED(display,  ("Plant #5 Moisture = \t%0.2f %%")%(state.Moisture_Humidity_Array[4]))
+                        if (config.plant_number >5):
+                            time.sleep(2.0)
+                            Scroll_SSD1306.addLineOLED(display,  ("----------"))
+                            Scroll_SSD1306.addLineOLED(display,  ("Plant #6 Moisture = \t%0.2f %%")%(state.Moisture_Humidity_Array[5]))
+                            Scroll_SSD1306.addLineOLED(display,  ("Plant #7 Moisture = \t%0.2f %%")%(state.Moisture_Humidity_Array[6]))
+                            Scroll_SSD1306.addLineOLED(display,  ("Plant #8 Moisture = \t%0.2f %%")%(state.Moisture_Humidity_Array[7]))
+                            Scroll_SSD1306.addLineOLED(display,  ("Plant #9 Moisture = \t%0.2f %%")%(state.Moisture_Humidity_Array[8]))
+                        
                     if (config.DEBUG):
                         print "Attempt OLEDLock released"
 		    OLEDLock.release()
@@ -1197,10 +1223,11 @@ if __name__ == '__main__':
     print "-----------------"
     scheduler.print_jobs()
     print "-----------------"
-  
-    if (config.USEBLYNK):
-        print "Blynk Status=", updateBlynk.blynkSGSAppOnline()
-        updateBlynk.blynkAlarmUpdate();
+    
+    if (config.DEBUG):
+        if (config.USEBLYNK):
+            print "Blynk Status=", updateBlynk.blynkSGSAppOnline()
+            updateBlynk.blynkAlarmUpdate();
 
     state.Last_Event = "SGS Started:"+time.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -1271,6 +1298,6 @@ if __name__ == '__main__':
 	    stopPump()
             for i in range(2,config.plant_number+1):
                 extendedPlants.turnOffExtendedPump(i, GDE_Ext1, GDE_Ext2)
-	    saveState()
+	    #saveState()
 
 	    print "done"

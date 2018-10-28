@@ -59,7 +59,7 @@ for i in range(10):
 
 fullaverage = total/10.0
 
-print "{} {:6.1f} ".format( "calibrated EMPTY Level=", fullaverage)
+print "{} {:6.1f} ".format( "calibrated FULL Level=", fullaverage)
 print ""
 
 f = open("TankCalibration","w+")

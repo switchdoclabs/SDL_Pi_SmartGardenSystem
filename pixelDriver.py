@@ -95,11 +95,13 @@ def statusLEDs(strip, PixelLock):
 
     if (state.runLEDs == True):
         while (state.runRainbow == True):
-            print "rainbow start"
+            if (config.DEBUG):
+                print "rainbow start"
             rainbow(strip)
             #rainbowCycle(strip)
             #theaterChaseRainbow(strip)
-            print "rainbow end"
+            if (config.DEBUG):
+                print "rainbow end"
 
         for i in range(1,8):
             strip.setPixelColor(i,Color(0,0,0))

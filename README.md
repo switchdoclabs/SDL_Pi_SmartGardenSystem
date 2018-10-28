@@ -9,6 +9,7 @@
 
 October 11, 2018 - Version 006 - Initial Release minus Plant 6-9 support
 October 14, 2018 - Version 007 - Initial Release plus Plant 6-9 support
+October 28, 2018 - Version 008 - Fixed OLED Display, Blynk lock, disable manual water option, select non-existant plant water
 
 # basic install instructions for supporting libraries
 

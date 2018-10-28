@@ -192,10 +192,10 @@ except TypeError as e:
 
 
 
-config.DEBUG = True
+config.DEBUG = False
 while (1):
 
-    print "Plant #%i: %0.if/%s" % (1, extendedPlants.readExtendedMoistureExt(1,None,ads1115), config.SensorType[1-1])
+    print "Plant #%i: %0.2f/%s" % (1, extendedPlants.readExtendedMoistureExt(1,None,ads1115), config.SensorType[1-1])
 
     # do 2-9 plants
     if (config.ADS1115_Ext1_Present):

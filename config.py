@@ -46,6 +46,12 @@ MySQL_Password = "password"
 
 
 ############
+# Feature Enable/Disable
+############
+manual_water = True
+
+
+############
 # Moisture Sensor and Pump Count 
 ############
 
