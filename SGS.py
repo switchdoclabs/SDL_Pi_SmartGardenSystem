@@ -6,7 +6,7 @@
 # SwitchDoc Labs
 #
 
-SGSVERSION = "008"
+SGSVERSION = "009"
 #imports 
 
 import sys, traceback
@@ -491,7 +491,8 @@ def publishStatusToPubNub():
         if (config.DEBUG):
         	print myMessage
 
-        pubnub.publish().channel('SmartPlantPi_Data').message(myMessage).async(publish_callback)
+        #pubnub.publish().channel('SmartPlantPi_Data').message(myMessage).async(publish_callback)
+        pubnub.publish().channel('SmartPlantPi_Data').message(myMessage)
 
 def publishEventToPubNub():
 
@@ -501,7 +502,8 @@ def publishEventToPubNub():
         if (config.DEBUG):
         	print myMessage
 
-        pubnub.publish().channel('SmartPlantPi_Data').message(myMessage).async(publish_callback)
+        #pubnub.publish().channel('SmartPlantPi_Data').message(myMessage).async(publish_callback)
+        pubnub.publish().channel('SmartPlantPi_Data').message(myMessage)
 
 def publishAlarmToPubNub(alarmText):
 
@@ -511,7 +513,8 @@ def publishAlarmToPubNub(alarmText):
         if (config.DEBUG):
         	print myMessage
 
-        pubnub.publish().channel('SmartPlantPi_Data').message(myMessage).async(publish_callback)
+        #pubnub.publish().channel('SmartPlantPi_Data').message(myMessage).async(publish_callback)
+        pubnub.publish().channel('SmartPlantPi_Data').message(myMessage)
 
 def publishStateToPubNub():
 	
@@ -544,8 +547,10 @@ def publishStateToPubNub():
         if (config.DEBUG):
         	print myMessage
 
-        pubnub.publish().channel('SmartPlantPi_Data').message(myMessage).async(publish_callback)
-        pubnub.publish().channel('SmartPlantPi_Alexa').message(myMessage).async(publish_callback)
+        #pubnub.publish().channel('SmartPlantPi_Data').message(myMessage).async(publish_callback)
+        pubnub.publish().channel('SmartPlantPi_Data').message(myMessage)
+        #pubnub.publish().channel('SmartPlantPi_Alexa').message(myMessage).async(publish_callback)
+        pubnub.publish().channel('SmartPlantPi_Alexa').message(myMessage)
 
         blinkLED(0,Color(0,255,255),3,0.200)
 
