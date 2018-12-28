@@ -7,6 +7,7 @@
 
 # all SmartGardenSystem Documentation on  shop.switchdoc.com under Smart Garden System
 
+
 December 27, 2018 - Version 009 - Fixed problem with PubNub library update<BR>
 October 28, 2018 - Version 008 - Fixed OLED Display, Blynk lock, disable manual water option, select non-existant plant water<BR>
 October 14, 2018 - Version 007 - Initial Release plus Plant 6-9 support<BR>
