@@ -18,8 +18,6 @@ fromAddress = "yourfromaddress@example.com"
 
 DEBUG = False
 
-
-
 ############
 # Blynk configuration
 ############

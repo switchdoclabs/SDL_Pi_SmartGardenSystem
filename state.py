@@ -13,7 +13,7 @@ except ImportError:
 ##################
 # if False, then English
 # if True, then Metric
-EnglishMetric = False 
+EnglishMetric = True 
 
 ##################
 # blynk State Variable 
@@ -45,7 +45,7 @@ for i in range(1, config.moisture_sensor_count+1):
 
 #water below this limit
 
-Moisture_Threshold = 60.0   
+Moisture_Threshold = 50.0   
 ##################
 # Pump State
 ##################
@@ -104,7 +104,7 @@ Is_Alarm_WaterEmpty = False
 
 # run rainbow simulation on LEDs
 
-runRainbow = False
+runRainbow = True
 
 # turn LED display on/off
 

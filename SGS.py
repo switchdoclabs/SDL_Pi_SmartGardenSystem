@@ -85,7 +85,7 @@ import extendedPlants
 # Debug True or False
 ############
 
-DEBUG = True
+DEBUG = False
 
 #initialization
 
@@ -903,8 +903,8 @@ def checkForAlarms():
                     state.Last_Event = "Alarm Active: "+time.strftime("%Y-%m-%d %H:%M:%S")
                     # release display
                 else:
-                    print "lastAlarm=", lastAlarm
-                    print "activeAlarm=", activeAlarm
+                    #print "lastAlarm=", lastAlarm
+                    #print "activeAlarm=", activeAlarm
                     if (state.Alarm_Last_State != activeAlarm):
                         state.Last_Event = "Alarm Ended: "+time.strftime("%Y-%m-%d %H:%M:%S")
                     else:
